@@ -13,10 +13,13 @@
 - Autenticación y autorización con JWT
 - Control de roles (admin, participant)
 - Gestión de usuarios
+- **Gestión de Menú Digital** - CRUD completo para menús
+- **Categorías de Menú** - Organización de menús por categorías
 - Base de datos PostgreSQL con Drizzle ORM
 - Almacenamiento de archivos con MinIO (S3)
 - Validación de datos con class-validator
 - Configuración centralizada con variables de entorno
+- Soporte para paginación en endpoints de listado
 
 ---
 
@@ -228,40 +231,27 @@ http://localhost:3000/api
 | ------ | -------- | ------------------------- | ---- |
 | GET    | `/users` | Listar todos los usuarios | ✅   |
 
-> **Leyenda:** ✅ Requiere autenticación | 👤 Requiere rol específico
+### Menú Digital
 
----
+| Método | Endpoint             | Descripción             | Auth |
+| ------ | -------------------- | ----------------------- | ---- |
+| POST   | `/menudigital`       | Crear nuevo menú        | ✅👤 |
+| GET    | `/menudigital`       | Listar todos los menús  | ❌   |
+| GET    | `/menudigital/:term` | Buscar menú por término | ❌   |
+| PATCH  | `/menudigital/:id`   | Actualizar menú         | ✅👤 |
+| DELETE | `/menudigital/:id`   | Eliminar menú           | ✅👤 |
 
-## Estructura del Proyecto
+### Categorías de Menú
 
-```
-apirestmenu/
-├── src/
-│   ├── auth/              # Módulo de autenticación
-│   │   ├── decorators/    # Decoradores personalizados
-│   │   ├── dto/           # Data Transfer Objects
-│   │   ├── entities/      # Entidades de usuario
-│   │   ├── guards/        # Guards de autorización
-│   │   ├── interfaces/    # Interfaces TypeScript
-│   │   └── strategies/    # Estrategias Passport
-│   ├── users/             # Módulo de usuarios
-│   ├── database/          # Configuración de base de datos
-│   ├── common/            # Utilidades y helpers compartidos
-│   │   ├── adapter/       # Adaptadores (bcrypt, etc.)
-│   │   ├── decorators/    # Decoradores comunes
-│   │   ├── dto/           # DTOs compartidos
-│   │   ├── interfaces/    # Interfaces comunes
-│   │   ├── types/         # Tipos TypeScript
-│   │   └── utils/         # Funciones utilitarias
-│   ├── config/            # Configuración de la aplicación
-│   ├── app.module.ts      # Módulo raíz
-│   └── main.ts            # Punto de entrada
-├── drizzle/               # Migraciones de base de datos
-├── public/                # Archivos estáticos
-├── .env                   # Variables de entorno
-├── drizzle.config.ts      # Configuración Drizzle
-└── package.json
-```
+| Método | Endpoint          | Descripción                  | Auth |
+| ------ | ----------------- | ---------------------------- | ---- |
+| POST   | `/category`       | Crear nueva categoría        | ✅👤 |
+| GET    | `/category`       | Listar todas las categorías  | ❌   |
+| GET    | `/category/:term` | Buscar categoría por término | ❌   |
+| PATCH  | `/category/:id`   | Actualizar categoría         | ✅👤 |
+| DELETE | `/category/:id`   | Eliminar categoría           | ✅👤 |
+
+> **Leyenda:** ✅ Requiere autenticación | 👤 Requiere rol específico (admin)
 
 ---
 

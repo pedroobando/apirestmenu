@@ -1,6 +1,6 @@
 ---
 name: nestjs-restaurant-api
-description: Skill para trabajar con el proyecto API Restaurante - NestJS con PostgreSQL, Drizzle ORM, JWT Auth y MinIO
+description: Skill para trabajar con el proyecto API Restaurante - NestJS con PostgreSQL, Drizzle ORM, JWT Auth, MinIO, Menu Digital y Categorías
 license: UNLICENSED
 compatibility: opencode
 metadata:
@@ -8,6 +8,10 @@ metadata:
   orm: drizzle
   database: postgresql
   storage: minio
+  features:
+    - authentication
+    - menu-management
+    - category-management
   author: Pedro Obando
 ---
 
@@ -57,6 +61,16 @@ src/
 │   ├── interfaces/          # ValidRoles, JwtPayload, IUser
 │   └── strategies/          # JWT Strategy
 ├── users/                   # Módulo de usuarios
+├── menu-digital/            # Módulo de menú digital
+│   ├── dto/                 # CreateMenuDigitalDto, UpdateMenuDigitalDto
+│   ├── schema/              # Esquema Drizzle de menús
+│   ├── inteface/            # Interfaces de menú
+│   └── menu-digital.service.ts
+├── menu-category/           # Módulo de categorías de menú
+│   ├── dto/                 # CreateMenuCategoryDto, UpdateMenuCategoryDto
+│   ├── schema/              # Esquema Drizzle de categorías
+│   ├── inteface/            # Interfaces de categoría
+│   └── menu-category.service.ts
 ├── database/                # Configuración de base de datos
 ├── common/                  # Utilidades compartidas
 │   ├── adapter/             # BcryptAdapter
@@ -69,6 +83,30 @@ src/
     ├── env.config.ts
     └── joi.validation.ts
 ```
+
+## Endpoints Principales
+
+### Autenticación
+
+- `POST /auth/login` - Iniciar sesión
+- `POST /auth/register` - Registrar usuario
+- `PATCH /auth/change` - Actualizar usuario (requiere auth)
+
+### Menú Digital (`/menudigital`)
+
+- `POST /menudigital` - Crear menú (solo admin)
+- `GET /menudigital` - Listar menús (paginado, público)
+- `GET /menudigital/:term` - Buscar menú por término
+- `PATCH /menudigital/:id` - Actualizar menú (solo admin)
+- `DELETE /menudigital/:id` - Eliminar menú (solo admin)
+
+### Categorías (`/category`)
+
+- `POST /category` - Crear categoría (solo admin)
+- `GET /category` - Listar categorías (paginado, público)
+- `GET /category/:term` - Buscar categoría por término
+- `PATCH /category/:id` - Actualizar categoría (solo admin)
+- `DELETE /category/:id` - Eliminar categoría (solo admin)
 
 ## Configuración de Entorno
 
@@ -169,6 +207,50 @@ findAll(@Query() paginationDto: PaginationDto) {
 }
 ```
 
+### 6. Crear un módulo completo CRUD (ej: Menu Digital)
+
+Patrón estándar para módulos CRUD:
+
+```typescript
+// src/menu-digital/menu-digital.controller.ts
+@Controller('menudigital')
+export class MenuDigitalController {
+  constructor(private readonly menuDigitalService: MenuDigitalService) {}
+
+  @Post()
+  @Auth(ValidRoles.admin) // Solo admin puede crear
+  create(@GetUser() user: IUser, @Body() createDto: CreateMenuDigitalDto) {
+    return this.menuDigitalService.create(user, createDto);
+  }
+
+  @Get()
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.menuDigitalService.findAll(paginationDto);
+  }
+
+  @Get(':term')
+  findOne(@Param('term') term: string) {
+    return this.menuDigitalService.findOnePlain(term);
+  }
+
+  @Patch(':id')
+  @Auth(ValidRoles.admin)
+  update(
+    @GetUser() user: IUser,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() updateDto: UpdateMenuDigitalDto,
+  ) {
+    return this.menuDigitalService.update(user, id, updateDto);
+  }
+
+  @Delete(':id')
+  @Auth(ValidRoles.admin)
+  remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    return this.menuDigitalService.remove(id);
+  }
+}
+```
+
 ## Reglas Importantes
 
 1. **SIEMPRE ejecutar `pnpm lint` después de hacer cambios** antes de finalizar
@@ -179,6 +261,9 @@ findAll(@Query() paginationDto: PaginationDto) {
 6. **Variables de entorno**: Nunca hardcodear secrets, usar siempre `process.env`
 7. **Docker**: Usar puerto 5444 para PostgreSQL, 9200/9201 para MinIO
 8. **Migraciones**: Generar migraciones después de cambios en schema de Drizzle
+9. **Módulos CRUD**: Seguir el patrón de `menu-digital` o `menu-category` para nuevos módulos
+10. **Validación de UUID**: Usar `ParseUUIDPipe` para parámetros de tipo UUID
+11. **Endpoints públicos vs privados**: Los GET de listado pueden ser públicos, POST/PATCH/DELETE requieren admin
 
 ## Servicios Docker
 
