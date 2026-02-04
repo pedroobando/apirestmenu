@@ -1,0 +1,4 @@
+ALTER TABLE "users" ALTER COLUMN "role" SET NOT NULL;--> statement-breakpoint
+ALTER TABLE "users" ADD COLUMN "active" boolean DEFAULT true;--> statement-breakpoint
+ALTER TABLE "users" ADD COLUMN "created_at" timestamp DEFAULT now() NOT NULL;--> statement-breakpoint
+ALTER TABLE "users" ADD COLUMN "updated_at" timestamp DEFAULT now() NOT NULL;
