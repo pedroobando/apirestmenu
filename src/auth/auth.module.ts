@@ -9,14 +9,16 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies';
 import { DatabaseModule } from 'src/database/database.module';
 
+const passportModule = PassportModule.register({ defaultStrategy: 'jwt' });
+
 @Module({
   imports: [
     // JwtStategy,
     ConfigModule,
     DatabaseModule,
     // TypeOrmModule.forFeature([User]),
-    PassportModule.register({ defaultStrategy: 'jwt' }),
-
+    // PassportModule.register({ defaultStrategy: 'jwt' }),
+    passportModule,
     // NOTE: Modulo asyncrono
     JwtModule.registerAsync({
       imports: [ConfigModule],

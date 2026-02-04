@@ -1,7 +1,9 @@
 // import { relations } from 'drizzle-orm';
 
+import { relations } from 'drizzle-orm';
 import { pgTable, uuid, text, boolean } from 'drizzle-orm/pg-core';
 import { timestamp } from 'src/common/schema/timestamp';
+import { menuCategories } from 'src/menu-category/schema';
 
 export const users = pgTable('users', {
   id: uuid().primaryKey().defaultRandom(),
@@ -12,3 +14,7 @@ export const users = pgTable('users', {
   active: boolean('active').default(true),
   ...timestamp,
 });
+
+export const usersRelations = relations(users, ({ many }) => ({
+  menuCategories: many(menuCategories),
+}));

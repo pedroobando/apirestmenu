@@ -9,7 +9,8 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { META_ROLES } from '../decorators';
-import { User } from '../entities';
+import { IUser } from '../interfaces';
+// import { User } from '../entities';
 
 @Injectable()
 export class UserRoleGuard implements CanActivate {
@@ -26,12 +27,11 @@ export class UserRoleGuard implements CanActivate {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const req = context.switchToHttp().getRequest();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const user = req.user as User;
+    const user = req.user as IUser;
     if (!user) {
       throw new BadRequestException('User not found');
     }
 
-    // console.log(validRoles.includes('user.roles'));
     //INFO: Cuando es un arreglo
     for (const role of user.role) {
       if (validRoles.includes(role)) {

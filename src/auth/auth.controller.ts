@@ -1,4 +1,14 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  Get,
+  UseGuards,
+  Patch,
+  Headers,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto, UpdateUserDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -8,6 +18,8 @@ import { Auth, GetUser, RoleProtected } from './decorators';
 import { User } from './entities';
 import { ValidRoles } from './interfaces';
 import { UserRoleGuard } from './guards';
+import { RawHeaders } from 'src/common/decorators';
+import { IncomingHttpHeaders } from 'http';
 
 @Controller('auth')
 export class AuthController {
@@ -32,16 +44,23 @@ export class AuthController {
     return this.authService.update(user, updateUserDto);
   }
 
-  // @Get('private')
-  // @UseGuards(AuthGuard())
-  // privateRoutes(
-  //   @GetUser() user: User,
-  //   @GetUser('email') userEmail: string,
-  //   @RawHeaders() rawHeaders: string[],
-  //   // @Headers() headers: IncomingHttpHeaders,
-  // ) {
-  //   return { ok: true, message: 'Hola Mundo Private', user, userEmail, rawHeaders, headers };
-  // }
+  @Get('private')
+  @UseGuards(AuthGuard())
+  privateRoutes(
+    @GetUser() user: User,
+    @GetUser('email') userEmail: string,
+    @RawHeaders() rawHeaders: string[],
+    @Headers() headers: IncomingHttpHeaders,
+  ) {
+    return {
+      ok: true,
+      message: 'Hola Mundo Private',
+      user,
+      userEmail,
+      rawHeaders,
+      headers,
+    };
+  }
 
   @Get('private2')
   @RoleProtected(ValidRoles.admin)
@@ -54,7 +73,7 @@ export class AuthController {
   }
 
   @Get('private3')
-  @Auth(ValidRoles.participant, ValidRoles.admin)
+  @Auth(ValidRoles.admin)
   privateRoute3(@GetUser() user: User) {
     return {
       message: 'private3',

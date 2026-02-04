@@ -1,9 +1,6 @@
 export enum ValidRoles {
   admin = 'admin',
-  participant = 'participant',
-  organization = 'organization',
-  assistant = 'assistant',
-  judge = 'judge',
+  bots = 'bots',
 }
 
 // export type ValidRoles = 'participant' | 'organization' | 'admin' | 'o-assistant' | 'o-judge';
