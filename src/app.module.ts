@@ -8,6 +8,7 @@ import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { MenuCategoryModule } from './menu-category/menu-category.module';
+import { MenuDigitalModule } from './menu-digital/menu-digital.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { MenuCategoryModule } from './menu-category/menu-category.module';
     UsersModule,
     AuthModule,
     MenuCategoryModule,
+    MenuDigitalModule,
   ],
 
   controllers: [],

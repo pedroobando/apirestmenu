@@ -1,0 +1,1 @@
+export { menuDigitals } from './schema';

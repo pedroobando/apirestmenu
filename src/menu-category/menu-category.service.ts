@@ -86,12 +86,13 @@ export class MenuCategoryService {
     return dataResult as unknown as IMenuCategory[];
   }
 
-  private async findOne(term: string): Promise<IMenuCategory> {
+  async findOne(term: string): Promise<IMenuCategory> {
     let dataResult;
     let errResult;
 
     if (isUUID(term, '4')) {
       // Buscar por UUID
+
       [dataResult, errResult] = await tryCatch(
         this.repository
           .select(this.selectData)
@@ -116,8 +117,10 @@ export class MenuCategoryService {
       throw new BadRequestException(`Error buscando la categoría con término: ${term}`);
     }
 
+    // console.log(dataResult.length == 0);
+
     // not found
-    if (!dataResult) {
+    if (dataResult.length == 0) {
       throw new NotFoundException(
         `La categoría con el término ${term.toString()} no fue encontrada`,
       );

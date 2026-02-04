@@ -9,5 +9,6 @@ import { AuthModule } from 'src/auth';
   imports: [DatabaseModule, ConfigModule, AuthModule],
   controllers: [MenuCategoryController],
   providers: [MenuCategoryService],
+  exports: [MenuCategoryService],
 })
 export class MenuCategoryModule {}
