@@ -1,8 +1,8 @@
 {
-  "name": "apirestaurant",
+  "name": "apirestmenu",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "Pedro Obando",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
