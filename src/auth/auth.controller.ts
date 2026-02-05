@@ -10,11 +10,10 @@ import {
   Headers,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto, LoginUserDto, UpdateUserDto } from './dto';
+import { UserService } from './user.service';
+import { CreateUserDto, LoginUserDto, UpdateUserDto, AuthResponseDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Auth, GetUser, RoleProtected } from './decorators';
-// import { RawHeaders } from 'src/common/decorators';
-// import { IncomingHttpHeaders } from 'http';
 import { User } from './entities';
 import { ValidRoles } from './interfaces';
 import { UserRoleGuard } from './guards';
@@ -23,17 +22,20 @@ import { IncomingHttpHeaders } from 'http';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+  ) {}
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  login(@Body() loginUserDto: LoginUserDto) {
+  login(@Body() loginUserDto: LoginUserDto): Promise<AuthResponseDto> {
     return this.authService.login(loginUserDto);
   }
 
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
-  create(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createUserDto: CreateUserDto): Promise<AuthResponseDto> {
     return this.authService.create(createUserDto);
   }
 
@@ -41,7 +43,7 @@ export class AuthController {
   @UseGuards(AuthGuard())
   @Patch('change')
   update(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
-    return this.authService.update(user, updateUserDto);
+    return this.userService.update(user.id, updateUserDto);
   }
 
   @Get('private')

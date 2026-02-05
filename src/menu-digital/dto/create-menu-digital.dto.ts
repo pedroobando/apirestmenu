@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsNumber,
@@ -25,6 +26,7 @@ export class CreateMenuDigitalDto {
   @IsOptional()
   @IsNumber()
   @Min(0, { message: 'Valor minio del precio es cero (0)' })
+  @Type(() => Number)
   price: number;
 
   @IsUUID()
